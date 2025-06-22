@@ -1,0 +1,43 @@
+# 🛠️ Culture Protocol Engine - Development Docker Compose
+version: '3.8'
+
+services:
+  culture-protocol-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/__pycache__
+      - /app/.pytest_cache
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  # Development tools
+  jupyter:
+    build: .
+    ports:
+      - "8888:8888"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+      - jupyter_data:/home/appuser/.jupyter
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''
+    restart: unless-stopped
+
+volumes:
+  jupyter_data:
+
+networks:
+  default:
+    name: culture-protocol-dev-network

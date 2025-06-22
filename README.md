@@ -84,6 +84,25 @@ results = evolution.run()
 
 ## 🛠️ Installation
 
+### Option 1: Docker (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/culture-protocol.git
+cd culture-protocol
+
+# Run with Docker Compose
+docker-compose up -d
+
+# Access the API at http://localhost:8000
+curl http://localhost:8000/
+
+# For development with hot reload
+docker-compose -f docker-compose.dev.yml up
+```
+
+### Option 2: Local Development
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/culture-protocol.git
@@ -96,8 +115,38 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+# Install package in development mode
+pip install -e .
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your API keys and settings
+
 # Run tests
 pytest
+
+# Start the API server
+uvicorn app.main:app --reload
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and configure:
+
+```bash
+# For OpenAI
+LLM_TYPE=openai
+OPENAI_API_KEY=your_api_key_here
+
+# For RunPod (Llama)
+LLM_TYPE=runpod
+RUNPOD_API_KEY=your_api_key_here
+RUNPOD_ENDPOINT_ID=your_endpoint_id_here
+
+# For testing without API calls
+LLM_TYPE=mock
 ```
 
 ## 🏗️ Architecture
@@ -105,13 +154,16 @@ pytest
 ```
 culture-protocol/
 ├── app/
-│   ├── models/          # Cultural element definitions
-│   ├── synthesis/       # Protocol blending algorithms
-│   ├── evolution/       # Cultural evolution simulator
-│   └── api/            # FastAPI endpoints
-├── experiments/        # Research notebooks
-├── docs/              # Detailed documentation
-└── examples/          # Usage examples
+│   ├── models/          # Domain models (CultureProtocol, ValueToken, etc.)
+│   ├── services/        # Domain services (synthesis, evaluation, evolution)
+│   ├── api/            # FastAPI endpoints
+│   ├── utils/          # Common utilities
+│   └── main.py         # FastAPI application entry point
+├── tests/              # Test suite
+├── docs/               # Detailed documentation & design philosophy
+├── examples/           # Usage examples
+├── requirements.txt    # Dependencies
+└── setup.py           # Package configuration
 ```
 
 ## 🌍 Use Cases
